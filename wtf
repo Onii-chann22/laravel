@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{ config('app.name', 'Laravel') }}</title>
+<link rel="preconnect" href="https://fonts.bunny.net">
+<link href="https://fonts.bunny.net/css?family=instrument-sans:400,500,600,700|jetbrains-mono:400,500" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0b0d1a; --ink:#f3f4fb; --muted:#9aa0c3; --line:rgba(255,255,255,.1);
+    --card:rgba(255,255,255,.04); --red:#ff4d2e; --violet:#7c5cff;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{
+    font-family:'Instrument Sans',system-ui,sans-serif;background:var(--bg);color:var(--ink);
+    min-height:100vh;line-height:1.6;-webkit-font-smoothing:antialiased;overflow-x:hidden;position:relative;
+  }
+  /* background: grid + glow */
+  body::before{
+    content:"";position:fixed;inset:0;z-index:0;pointer-events:none;
+    background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);
+    background-size:56px 56px;
+    -webkit-mask-image:radial-gradient(ellipse 70% 60% at 50% 0%,#000 30%,transparent 80%);
+            mask-image:radial-gradient(ellipse 70% 60% at 50% 0%,#000 30%,transparent 80%);
+  }
+  .glow{position:fixed;border-radius:50%;filter:blur(120px);opacity:.45;z-index:0;pointer-events:none}
+  .glow.a{width:480px;height:480px;background:var(--red);top:-160px;left:-120px}
+  .glow.b{width:520px;height:520px;background:var(--violet);top:80px;right:-180px}
+  .wrap{position:relative;z-index:1;max-width:1120px;margin:0 auto;padding:0 24px}
+  a{color:inherit;text-decoration:none}
+  a:focus-visible,button:focus-visible{outline:2px solid var(--red);outline-offset:3px;border-radius:999px}
+
+  /* nav */
+  header{display:flex;justify-content:space-between;align-items:center;padding:28px 0}
+  .brand{display:flex;align-items:center;gap:10px;font-weight:700;font-size:18px;letter-spacing:-.01em}
+  .logo{width:32px;height:32px;border-radius:9px;background:linear-gradient(135deg,var(--red),#ff9a3c);display:grid;place-items:center;font-weight:700;color:#fff}
+  nav{display:flex;gap:8px;font-size:14px;font-weight:500}
+  .btn{display:inline-block;padding:11px 22px;border-radius:999px;font-weight:600;font-size:15px;transition:transform .15s,background .15s,border-color .15s}
+  .btn:hover{transform:translateY(-2px)}
+  .btn-primary{background:linear-gradient(135deg,var(--red),#ff7a3c);color:#fff;box-shadow:0 10px 30px -8px rgba(255,77,46,.6)}
+  .btn-ghost{border:1px solid var(--line);background:var(--card)}
+  .btn-ghost:hover{border-color:rgba(255,255,255,.3)}
+  nav .btn{padding:9px 18px;font-size:14px}
+
+  /* hero */
+  .hero{display:grid;grid-template-columns:1.05fr 1fr;gap:56px;align-items:center;padding:72px 0 40px}
+  .badge{display:inline-flex;align-items:center;gap:8px;padding:6px 14px;border:1px solid var(--line);background:var(--card);border-radius:999px;font-size:13px;color:var(--muted)}
+  .dot{width:8px;height:8px;border-radius:50%;background:#34d399;box-shadow:0 0 0 4px rgba(52,211,153,.2)}
+  h1{font-size:clamp(40px,6vw,68px);line-height:1.04;letter-spacing:-.035em;font-weight:700;margin:22px 0 20px}
+  h1 span{background:linear-gradient(90deg,#ff6a3c,#ff4d8d 50%,#9b7bff);-webkit-background-clip:text;background-clip:text;color:transparent}
+  .lead{color:var(--muted);font-size:18px;max-width:30em}
+  .cta{display:flex;flex-wrap:wrap;gap:12px;margin-top:34px}
+
+  /* terminal */
+  .term{border:1px solid var(--line);border-radius:18px;background:rgba(15,18,38,.8);backdrop-filter:blur(10px);
+        box-shadow:0 40px 80px -30px rgba(124,92,255,.5);overflow:hidden;transform:rotate(1.5deg);transition:transform .4s}
+  .term:hover{transform:rotate(0)}
+  .bar{display:flex;gap:7px;align-items:center;padding:14px 16px;border-bottom:1px solid var(--line)}
+  .bar i{width:11px;height:11px;border-radius:50%;display:block}
+  .bar i:nth-child(1){background:#ff5f57}.bar i:nth-child(2){background:#febc2e}.bar i:nth-child(3){background:#28c840}
+  .bar small{margin-left:10px;color:var(--muted);font-size:12px}
+  pre{font-family:'JetBrains Mono',ui-monospace,monospace;font-size:13.5px;line-height:1.9;padding:22px;overflow-x:auto}
+  .p{color:#6b7199}.ok{color:#34d399}.hl{color:#ff8a5c}
+  .cur{display:inline-block;width:8px;height:16px;background:var(--ink);vertical-align:middle;animation:blink 1s steps(2) infinite}
+  @keyframes blink{50%{opacity:0}}
+
+  /* stats */
+  .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--line);border:1px solid var(--line);border-radius:18px;overflow:hidden;margin:64px 0}
+  .stat{background:#0e1122;padding:26px;text-align:center}
+  .stat b{display:block;font-size:28px;letter-spacing:-.02em}
+  .stat span{color:var(--muted);font-size:14px}
+
+  /* cards */
+  h2{font-size:clamp(28px,4vw,40px);letter-spacing:-.03em;line-height:1.1;margin-bottom:12px}
+  .sub{color:var(--muted);max-width:32em;margin-bottom:36px}
+  .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+  .card{position:relative;padding:28px;border:1px solid var(--line);border-radius:20px;background:var(--card);transition:transform .2s,border-color .2s,background .2s}
+  .card:hover{transform:translateY(-6px);border-color:rgba(255,120,80,.5);background:rgba(255,255,255,.07)}
+  .ico{width:46px;height:46px;border-radius:13px;display:grid;place-items:center;margin-bottom:20px;
+       background:linear-gradient(135deg,rgba(255,77,46,.25),rgba(124,92,255,.25));border:1px solid var(--line)}
+  .ico svg{width:22px;height:22px;stroke:#fff;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+  .card h3{font-size:19px;margin-bottom:8px;letter-spacing:-.01em}
+  .card p{color:var(--muted);font-size:15px}
+  .card code{background:rgba(255,255,255,.1);padding:2px 7px;border-radius:6px;font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--ink)}
+  .more{display:inline-block;margin-top:18px;font-weight:600;font-size:14px;color:#ff8a5c}
+  .card:hover .more{text-decoration:underline;text-underline-offset:4px}
+
+  footer{display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;padding:60px 0 36px;color:var(--muted);font-size:14px}
+
+  @media(max-width:900px){
+    .hero{grid-template-columns:1fr;padding-top:40px}
+    .grid{grid-template-columns:1fr}
+    .term{transform:none}
+  }
+  @media(max-width:560px){.stats{grid-template-columns:1fr}}
+  @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div class="glow a"></div>
+<div class="glow b"></div>
+
+<div class="wrap">
+  <header>
+    <a href="/" class="brand"><span class="logo">{{ strtoupper(substr(config('app.name', 'Laravel'), 0, 1)) }}</span>{{ config('app.name', 'Laravel') }}</a>
+    @if (Route::has('login'))
+      <nav>
+        @auth
+          <a href="{{ url('/dashboard') }}" class="btn btn-primary">Open dashboard</a>
+        @else
+          <a href="{{ route('login') }}" class="btn btn-ghost">Log in</a>
+          @if (Route::has('register'))
+            <a href="{{ route('register') }}" class="btn btn-primary">Create account</a>
+          @endif
+        @endauth
+      </nav>
+    @endif
+  </header>
+
+  <main>
+    <section class="hero">
+      <div>
+        <span class="badge"><i class="dot"></i> Laravel {{ Illuminate\Foundation\Application::VERSION }} is running</span>
+        <h1>Build something <span>people love</span>.</h1>
+        <p class="lead">Your app is installed and ready. Add a route, create a view, and watch your idea come to life in the browser.</p>
+        <div class="cta">
+          <a href="https://laravel.com/docs" target="_blank" rel="noopener" class="btn btn-primary">Read the docs</a>
+          <a href="https://laracasts.com" target="_blank" rel="noopener" class="btn btn-ghost">Watch Laracasts</a>
+        </div>
+      </div>
+
+      <div class="term" aria-label="Example terminal commands">
+        <div class="bar"><i></i><i></i><i></i><small>{{ basename(base_path()) }}</small></div>
+<pre><code><span class="p">$</span> php artisan make:model Post -mc
+<span class="ok">✔ Model, migration and controller created</span>
+
+<span class="p">$</span> php artisan migrate
+<span class="ok">✔ Database is up to date</span>
+
+<span class="p">$</span> php artisan serve
+<span class="hl">Server running on http://127.0.0.1:8000</span>
+<span class="p">$</span> <span class="cur"></span></code></pre>
+      </div>
+    </section>
+
+    <section class="stats">
+      <div class="stat"><b>PHP {{ PHP_VERSION }}</b><span>Runtime</span></div>
+      <div class="stat"><b>{{ app()->environment() }}</b><span>Environment</span></div>
+      <div class="stat"><b>{{ config('app.debug') ? 'On' : 'Off' }}</b><span>Debug mode</span></div>
+    </section>
+
+    <section>
+      <h2>Your next three steps</h2>
+      <p class="sub">Start with a page, add data, then let people sign in.</p>
+      <div class="grid">
+        <a class="card" href="https://laravel.com/docs/routing" target="_blank" rel="noopener">
+          <div class="ico"><svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h10M4 18h16"/></svg></div>
+          <h3>Add a page</h3>
+          <p>Define a route in <code>routes/web.php</code> and return a Blade view.</p>
+          <span class="more">Routing guide</span>
+        </a>
+        <a class="card" href="https://laravel.com/docs/eloquent" target="_blank" rel="noopener">
+          <div class="ico"><svg viewBox="0 0 24 24"><ellipse cx="12" cy="6" rx="7" ry="3"/><path d="M5 6v12c0 1.7 3.1 3 7 3s7-1.3 7-3V6M5 12c0 1.7 3.1 3 7 3s7-1.3 7-3"/></svg></div>
+          <h3>Store data</h3>
+          <p>Create a model and migration, then read and write records with Eloquent.</p>
+          <span class="more">Eloquent guide</span>
+        </a>
+        <a class="card" href="https://laravel.com/docs/starter-kits" target="_blank" rel="noopener">
+          <div class="ico"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.6-7 8-7s8 3 8 7"/></svg></div>
+          <h3>Add sign-in</h3>
+          <p>Install a starter kit to get login, registration and a dashboard.</p>
+          <span class="more">Starter kits</span>
+        </a>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <span>© {{ date('Y') }} {{ config('app.name', 'Laravel') }}</span>
+    <span>Edit <code>resources/views/welcome.blade.php</code> to change this page</span>
+  </footer>
+</div>
+</body>
+</html>
