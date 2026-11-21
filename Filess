@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{{ config('app.name', 'Laravel') }}</title>
+
+    @fonts
+
+    @if (file_exists(public_path('build/manifest.json')) || file_exists(public_path('hot')))
+        @vite(['resources/css/app.css', 'resources/js/app.js'])
+    @endif
+</head>
+<body class="min-h-screen bg-[#eceef6] text-[#161a33] antialiased font-sans">
+
+    {{-- Top bar --}}
+    <header class="mx-auto flex max-w-6xl items-center justify-between px-6 py-6">
+        <a href="/" class="text-lg font-semibold tracking-tight">{{ config('app.name', 'Laravel') }}</a>
+
+        @if (Route::has('login'))
+            <nav class="flex items-center gap-2 text-sm">
+                @auth
+                    <a href="{{ url('/dashboard') }}"
+                       class="rounded-full bg-[#161a33] px-5 py-2 font-medium text-white hover:bg-[#2a3060] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#f53003]">
+                        Open dashboard
+                    </a>
+                @else
+                    <a href="{{ route('login') }}"
+                       class="rounded-full px-5 py-2 font-medium hover:bg-white/70 focus-visible:outline-2 focus-visible:outline-[#f53003]">
+                        Log in
+                    </a>
+                    @if (Route::has('register'))
+                        <a href="{{ route('register') }}"
+                           class="rounded-full bg-[#161a33] px-5 py-2 font-medium text-white hover:bg-[#2a3060] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#f53003]">
+                            Create account
+                        </a>
+                    @endif
+                @endauth
+            </nav>
+        @endif
+    </header>
+
+    <main class="mx-auto max-w-6xl px-6 pb-20 pt-10 lg:pt-20">
+
+        {{-- Hero --}}
+        <section class="grid items-center gap-12 lg:grid-cols-[1.05fr_1fr]">
+            <div>
+                <h1 class="max-w-xl text-5xl font-semibold leading-[1.05] tracking-tight sm:text-6xl">
+                    Your app is running. Start building.
+                </h1>
+                <p class="mt-6 max-w-md text-lg leading-relaxed text-[#4b5073]">
+                    Laravel is installed and ready. Add a route, create a view, and see your change in the browser.
+                </p>
+                <div class="mt-9 flex flex-wrap gap-3">
+                    <a href="https://laravel.com/docs" target="_blank" rel="noopener"
+                       class="rounded-full bg-[#f53003] px-6 py-3 font-medium text-white hover:bg-[#d92800] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#161a33]">
+                        Read the docs
+                    </a>
+                    <a href="https://laracasts.com" target="_blank" rel="noopener"
+                       class="rounded-full border border-[#161a33]/20 bg-white/60 px-6 py-3 font-medium hover:bg-white focus-visible:outline-2 focus-visible:outline-[#f53003]">
+                        Watch Laracasts
+                    </a>
+                </div>
+            </div>
+
+            {{-- Terminal --}}
+            <div class="overflow-hidden rounded-2xl bg-[#161a33] shadow-2xl shadow-[#161a33]/25" aria-label="Example terminal commands">
+                <div class="flex items-center gap-2 border-b border-white/10 px-4 py-3">
+                    <span class="size-3 rounded-full bg-white/20"></span>
+                    <span class="size-3 rounded-full bg-white/20"></span>
+                    <span class="size-3 rounded-full bg-white/20"></span>
+                    <span class="ml-3 text-xs text-white/50">{{ basename(base_path()) }}</span>
+                </div>
+                <pre class="overflow-x-auto p-6 font-mono text-sm leading-7 text-white/90"><code><span class="text-white/40">$</span> php artisan make:model Post -mc
+<span class="text-emerald-300">Model, migration and controller created.</span>
+
+<span class="text-white/40">$</span> php artisan migrate
+<span class="text-emerald-300">Database is up to date.</span>
+
+<span class="text-white/40">$</span> php artisan serve
+<span class="text-[#ff7a5c]">Server running on http://127.0.0.1:8000</span></code></pre>
+            </div>
+        </section>
+
+        {{-- Next steps --}}
+        <section class="mt-24 grid gap-4 md:grid-cols-3">
+            <a href="https://laravel.com/docs/routing" target="_blank" rel="noopener"
+               class="group rounded-2xl bg-white p-7 focus-visible:outline-2 focus-visible:outline-[#f53003]">
+                <h2 class="text-lg font-semibold">Add a page</h2>
+                <p class="mt-2 leading-relaxed text-[#4b5073]">
+                    Define a route in <code class="rounded bg-[#eceef6] px-1.5 py-0.5 text-sm">routes/web.php</code> and return a Blade view.
+                </p>
+                <span class="mt-5 inline-block text-sm font-medium underline-offset-4 group-hover:underline">Routing guide</span>
+            </a>
+
+            <a href="https://laravel.com/docs/eloquent" target="_blank" rel="noopener"
+               class="group rounded-2xl bg-white p-7 focus-visible:outline-2 focus-visible:outline-[#f53003]">
+                <h2 class="text-lg font-semibold">Store data</h2>
+                <p class="mt-2 leading-relaxed text-[#4b5073]">
+                    Create a model and migration, then read and write records with Eloquent.
+                </p>
+                <span class="mt-5 inline-block text-sm font-medium underline-offset-4 group-hover:underline">Eloquent guide</span>
+            </a>
+
+            <a href="https://laravel.com/docs/starter-kits" target="_blank" rel="noopener"
+               class="group rounded-2xl bg-white p-7 focus-visible:outline-2 focus-visible:outline-[#f53003]">
+                <h2 class="text-lg font-semibold">Add sign-in</h2>
+                <p class="mt-2 leading-relaxed text-[#4b5073]">
+                    Install a starter kit to get login, registration and a dashboard.
+                </p>
+                <span class="mt-5 inline-block text-sm font-medium underline-offset-4 group-hover:underline">Starter kits</span>
+            </a>
+        </section>
+    </main>
+
+    <footer class="mx-auto max-w-6xl px-6 pb-10 text-sm text-[#4b5073]">
+        Laravel v{{ Illuminate\Foundation\Application::VERSION }} · PHP v{{ PHP_VERSION }}
+    </footer>
+</body>
+</html>
